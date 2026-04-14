@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>海底貝殼 - 期中報告</title>
+
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script src="libraries/p5.min.js"></script>
+    <script src="libraries/p5.sound.min.js"></script>
+  </head>
+
+  <body>
+    <!-- 主要 p5.js 畫布容器 -->
+    <div id="p5-container"></div>
+
+    <!-- 作品展示面板 -->
+    <div id="portfolio-panel" class="portfolio-panel hidden">
+      <div class="portfolio-content">
+        <button class="close-btn" onclick="closePortfolio()">×</button>
+        
+        <h2 id="work-title">作品標題</h2>
+        <p id="work-description">作品描述</p>
+
+        <!-- 作品展示區域 - 使用 iframe 嵌入 -->
+        <div id="work-display" class="work-display">
+          <iframe id="work-iframe" src="" frameborder="0" allow="fullscreen"></iframe>
+        </div>
+
+        <!-- 技術要點說明 -->
+        <div class="tech-details">
+          <h3>技術要點：</h3>
+          <ul id="tech-list">
+            <li>Vertex 指令用於自訂形狀繪製</li>
+            <li>For 迴圈與陣列管理多個物件</li>
+            <li>Class 物件導向設計</li>
+            <li>互動事件響應</li>
+          </ul>
+        </div>
+
+        <div class="navigation-buttons">
+          <button onclick="previousWork()">← 上一個</button>
+          <button onclick="nextWork()">下一個 →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 信息面板 -->
+    <div class="info-panel">
+      <h1>🐚 海底貝殼探險</h1>
+      <p>期中報告 - 點擊珍珠探索技術應用</p>
+      <div class="tech-stack">
+        <span class="tag">Vertex</span>
+        <span class="tag">For Loop</span>
+        <span class="tag">Class OOP</span>
+        <span class="tag">iframe</span>
+      </div>
+    </div>
+
+    <script src="sketch.js"></script>
+    <script>
+      // 控制作品展示面板
+      function showPortfolio(index) {
+        const panel = document.getElementById('portfolio-panel');
+        panel.classList.remove('hidden');
+        displayWorkContent(index);
+      }
+
+      function closePortfolio() {
+        const panel = document.getElementById('portfolio-panel');
+        panel.classList.add('hidden');
+      }
+
+      function displayWorkContent(index) {
+        const works = [
+          {
+            title: "Vertex 指令 - 自訂形狀",
+            description: "使用 p5.js 的 vertex() 指令繪製複雜的貝殼形狀。通過組合多個頂點，可以創建出螺旋形、扇形和螺形的多樣貝殼設計。",
+            iframe: "work1.html",
+            techs: ["beginShape()", "vertex()", "endShape()"]
+          },
+          {
+            title: "For 迴圈與陣列",
+            description: "使用 for 迴圈遍歷陣列，管理多個貝殼和珍珠物件的生成、更新和顯示。說明如何高效地組織大量相似物件。",
+            iframe: "work2.html",
+            techs: ["for loop", "Array", "push()"]
+          },
+          {
+            title: "Class 物件導向設計",
+            description: "透過 Shell 和 Pearl 類的定義，展示物件導向程設的核心概念：封裝、繼承和方法組織。每個物件維護自己的狀態和行為。",
+            iframe: "work3.html",
+            techs: ["class", "constructor", "methods"]
+          },
+          {
+            title: "互動系統 & iframe",
+            description: "實現點擊事件檢測，將點擊的珍珠與作品關聯。通過 iframe 嵌入和展示各個技術演示頁面，實現無縫導覽體驗。",
+            iframe: "work4.html",
+            techs: ["mousePressed()", "iframe", "DOM manipulation"]
+          }
+        ];
+
+        const work = works[index % works.length];
+        document.getElementById('work-title').textContent = work.title;
+        document.getElementById('work-description').textContent = work.description;
+        document.getElementById('work-iframe').src = work.iframe;
+
+        const techList = document.getElementById('tech-list');
+        techList.innerHTML = work.techs.map(tech => `<li>${tech}</li>`).join('');
+      }
+
+      function previousWork() {
+        // 實現上一個功能
+        alert('導覽至上一個作品');
+      }
+
+      function nextWork() {
+        // 實現下一個功能
+        alert('導覽至下一個作品');
+      }
+
+      // 按 ESC 關閉面板
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closePortfolio();
+        }
+      });
+    </script>
+  </body>
+</html>

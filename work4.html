@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>互動系統與 iframe 整合演示</title>
+    <script src="libraries/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        #p5-container {
+            width: 100%;
+            height: 100%;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="p5-container"></div>
+    <div class="info">
+        <strong>互動系統演示</strong><br>
+        點擊珍珠觸發事件 - mousePressed()
+    </div>
+    <script>
+        let sketch = (p) => {
+            // Pearl 類別
+            class Pearl {
+                constructor(x, y, size, index) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = size;
+                    this.index = index;
+                    this.clicked = false;
+                    this.clickedTime = 0;
+                }
+
+                display() {
+                    let pulse = p.sin(this.clickedTime) * 0.5 + 1;
+                    
+                    // 外部金色光暈
+                    let glowAlpha = this.clicked ? 150 : 80;
+                    p.fill(255, 220, 100, glowAlpha);
+                    p.noStroke();
+                    p.ellipse(this.x, this.y, this.size * 2.5 * pulse);
+
+                    // 珍珠主體 - 亮白色
+                    p.fill(255, 245, 220);
+                    p.stroke(230, 210, 180);
+                    p.strokeWeight(1.5);
+                    p.ellipse(this.x, this.y, this.size * 2);
+
+                    // 珍珠高光
+                    p.fill(255, 255, 240, 220);
+                    p.noStroke();
+                    p.ellipse(this.x - this.size * 0.6, this.y - this.size * 0.6, this.size * 0.9);
+
+                    // 珍珠第二層高光
+                    p.fill(255, 255, 255, 150);
+                    p.ellipse(this.x - this.size * 0.4, this.y - this.size * 0.4, this.size * 0.4);
+
+                    if (this.clicked) {
+                        p.stroke(255, 150, 100, 100 * (1 - this.clickedTime / 30));
+                        p.strokeWeight(3);
+                        p.noFill();
+                        p.ellipse(this.x, this.y, this.size * 2 * pulse);
+                        this.clickedTime++;
+                        if (this.clickedTime > 30) {
+                            this.clicked = false;
+                        }
+                    }
+                }
+
+                checkClick(mx, my) {
+                    let d = p.dist(mx, my, this.x, this.y);
+                    if (d < this.size * 1.5) {
+                        this.clicked = true;
+                        this.clickedTime = 0;
+                        return true;
+                    }
+                    return false;
+                }
+            }
+
+            let pearls = [];
+            let clickCount = 0;
+
+            p.setup = function() {
+                let container = document.getElementById('p5-container');
+                p.createCanvas(container.offsetWidth, container.offsetHeight);
+
+                // 創建珍珠
+                for (let i = 0; i < 8; i++) {
+                    pearls.push(new Pearl(
+                        p.random(50, p.width - 50),
+                        p.random(50, p.height - 50),
+                        p.random(8, 15),
+                        i
+                    ));
+                }
+            };
+
+            p.draw = function() {
+                p.background(100, 150, 200);
+
+                // 海洋漸層背景
+                for (let i = 0; i < p.height; i++) {
+                    let inter = p.map(i, 0, p.height, 0, 1);
+                    let c = p.lerpColor(p.color(100, 150, 200), p.color(20, 80, 150), inter);
+                    p.stroke(c);
+                    p.line(0, i, p.width, i);
+                }
+
+                // 顯示所有珍珠
+                for (let pearl of pearls) {
+                    pearl.display();
+                }
+
+                // 顯示互動信息
+                p.fill(255);
+                p.textSize(14);
+                p.textAlign(p.LEFT);
+                p.text("點擊珍珠次數: " + clickCount, 10, p.height - 10);
+
+                // 滑鼠懸停提示
+                let hovered = false;
+                for (let pearl of pearls) {
+                    let d = p.dist(p.mouseX, p.mouseY, pearl.x, pearl.y);
+                    if (d < pearl.size * 1.5) {
+                        hovered = true;
+                        break;
+                    }
+                }
+
+                if (hovered) {
+                    p.cursor(p.HAND);
+                    p.fill(255, 200);
+                    p.textSize(12);
+                    p.text("可點擊", p.mouseX + 10, p.mouseY - 10);
+                } else {
+                    p.cursor(p.ARROW);
+                }
+            };
+
+            p.mousePressed = function() {
+                for (let pearl of pearls) {
+                    if (pearl.checkClick(p.mouseX, p.mouseY)) {
+                        clickCount++;
+                        return false;
+                    }
+                }
+            };
+
+            p.windowResized = function() {
+                if (document.getElementById('p5-container')) {
+                    let container = document.getElementById('p5-container');
+                    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+                }
+            };
+        };
+
+        new p5(sketch);
+    </script>
+</body>
+</html>

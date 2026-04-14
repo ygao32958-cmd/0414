@@ -1,0 +1,280 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  font-family: 'Microsoft JhengHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #1a5490 0%, #0f3d73 100%);
+  color: #333;
+  overflow: hidden;
+  display: flex;
+}
+
+/* P5.js 畫布容器 */
+#p5-container {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  background: linear-gradient(135deg, #64b5f6 0%, #1e3a8a 100%);
+}
+
+canvas {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* 信息面板 */
+.info-panel {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  z-index: 100;
+  max-width: 350px;
+  animation: slideIn 0.5s ease-out;
+}
+
+.info-panel h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #0066cc;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.info-panel p {
+  color: #666;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.tech-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+/* 作品展示面板 */
+.portfolio-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.portfolio-panel.hidden {
+  display: none;
+}
+
+.portfolio-content {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 800px;
+  max-height: 85vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease-out;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  color: #999;
+  cursor: pointer;
+  transition: color 0.2s;
+  padding: 5px 10px;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.portfolio-content h2 {
+  font-size: 28px;
+  color: #0066cc;
+  margin-bottom: 15px;
+}
+
+.portfolio-content p {
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 25px;
+  font-size: 15px;
+}
+
+/* 作品顯示區域 */
+.work-display {
+  width: 100%;
+  height: 300px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 25px;
+  background: #f9f9f9;
+}
+
+.work-display iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* 技術詳情 */
+.tech-details {
+  background: #f0f7ff;
+  border-left: 4px solid #0066cc;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 25px;
+}
+
+.tech-details h3 {
+  color: #0066cc;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.tech-details ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+.tech-details li {
+  color: #555;
+  margin-bottom: 8px;
+  padding-left: 20px;
+  position: relative;
+  line-height: 1.5;
+}
+
+.tech-details li:before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  color: #0066cc;
+  font-weight: bold;
+}
+
+/* 導覽按鈕 */
+.navigation-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.navigation-buttons button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.navigation-buttons button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.navigation-buttons button:active {
+  transform: translateY(0);
+}
+
+/* 動畫 */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  .info-panel {
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    max-width: none;
+    padding: 15px;
+  }
+
+  .info-panel h1 {
+    font-size: 20px;
+  }
+
+  .portfolio-content {
+    max-width: 90%;
+    padding: 25px;
+    max-height: 90vh;
+  }
+
+  .portfolio-content h2 {
+    font-size: 22px;
+  }
+
+  .work-display {
+    height: 250px;
+  }
+}

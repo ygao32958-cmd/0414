@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vertex 指令演示</title>
+    <script src="libraries/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        #p5-container {
+            width: 100%;
+            height: 100%;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="p5-container"></div>
+    <div class="info">
+        <strong>Vertex 指令演示</strong><br>
+        使用 vertex() 繪製多邊形和複雜形狀
+    </div>
+    <script>
+        let sketch = (p) => {
+            let rotation = 0;
+
+            p.setup = function() {
+                let container = document.getElementById('p5-container');
+                p.createCanvas(container.offsetWidth, container.offsetHeight);
+            };
+
+            p.draw = function() {
+                p.background(100, 150, 200);
+                
+                // 海洋漸層背景
+                for (let i = 0; i < p.height; i++) {
+                    let inter = p.map(i, 0, p.height, 0, 1);
+                    let c = p.lerpColor(p.color(100, 150, 200), p.color(20, 80, 150), inter);
+                    p.stroke(c);
+                    p.line(0, i, p.width, i);
+                }
+
+                // 繪製三種貝殼範例
+
+                // 打開式貝殼 1 - 上半部
+                p.push();
+                p.translate(p.width / 3, p.height / 2);
+                p.fill(180, 130, 180);
+                p.stroke(120, 80, 140);
+                p.strokeWeight(2);
+                p.beginShape();
+                for (let i = 0; i <= 20; i++) {
+                    let angle = (i / 20) * p.PI;
+                    let dist = 80 * (1 - i / 40);
+                    let waveAmount = p.sin(angle * 3) * 15;
+                    let vx = p.cos(angle) * dist + waveAmount;
+                    let vy = -p.sin(angle) * dist - 20;
+                    p.vertex(vx, vy);
+                }
+                p.endShape();
+                p.pop();
+
+                // 打開式貝殼 2 - 下半部
+                p.push();
+                p.translate(p.width / 3, p.height / 2);
+                p.fill(160, 110, 170);
+                p.stroke(100, 60, 130);
+                p.strokeWeight(2);
+                p.beginShape();
+                for (let i = 0; i <= 20; i++) {
+                    let angle = (i / 20) * p.PI;
+                    let dist = 80 * (1 - i / 40);
+                    let waveAmount = p.sin(angle * 3) * 15;
+                    let vx = p.cos(angle) * dist + waveAmount;
+                    let vy = p.sin(angle) * dist + 20;
+                    p.vertex(vx, vy);
+                }
+                p.endShape();
+
+                // 珍珠
+                p.fill(255, 245, 220);
+                p.stroke(230, 210, 180);
+                p.strokeWeight(1.5);
+                p.ellipse(0, 0, 40);
+                p.fill(255, 255, 240, 220);
+                p.noStroke();
+                p.ellipse(-12, -12, 20);
+                p.pop();
+
+                // 扇形貝殼
+                p.push();
+                p.translate(p.width * 2 / 3, p.height / 2);
+                p.fill(170, 120, 190);
+                p.stroke(120, 70, 150);
+                p.strokeWeight(2);
+                p.beginShape();
+                p.vertex(0, -60);
+                for (let i = 0; i <= 15; i++) {
+                    let angle = (i / 15) * p.PI - p.PI / 2;
+                    let dist = 80;
+                    let waveAmount = p.sin(i * 0.4) * 10;
+                    let vx = p.cos(angle) * (dist + waveAmount);
+                    let vy = p.sin(angle) * dist - 20;
+                    p.vertex(vx, vy);
+                }
+                p.endShape(p.CLOSE);
+                p.pop();
+            };
+
+            p.windowResized = function() {
+                if (document.getElementById('p5-container')) {
+                    let container = document.getElementById('p5-container');
+                    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+                }
+            };
+        };
+
+        new p5(sketch);
+    </script>
+</body>
+</html>

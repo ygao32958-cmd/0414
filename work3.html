@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 物件導向演示</title>
+    <script src="libraries/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        #p5-container {
+            width: 100%;
+            height: 100%;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="p5-container"></div>
+    <div class="info">
+        <strong>Class 物件導向演示</strong><br>
+        使用類別組織代碼和狀態
+    </div>
+    <script>
+        let sketch = (p) => {
+            // 貝殼類別
+            class Shell {
+                constructor(x, y, size, type) {
+                    this.x = x;
+                    this.y = y;
+                    this.size = size;
+                    this.type = type;
+                    this.rotation = p.random(p.TWO_PI);
+                    this.rotationSpeed = p.random(-0.02, 0.02);
+                }
+
+                display() {
+                    p.push();
+                    p.translate(this.x, this.y);
+                    p.rotate(this.rotation);
+
+                    if (this.type === 0) {
+                        this.drawSpiralShell();
+                    } else if (this.type === 1) {
+                        this.drawFanShell();
+                    } else {
+                        this.drawConchShell();
+                    }
+
+                    p.pop();
+                }
+
+                update() {
+                    this.rotation += this.rotationSpeed;
+                }
+
+                drawSpiralShell() {
+                    // 上半部貝殼（紫色系）
+                    p.fill(180, 130, 180);
+                    p.stroke(120, 80, 140);
+                    p.strokeWeight(2);
+
+                    p.beginShape();
+                    for (let i = 0; i <= 20; i++) {
+                        let angle = (i / 20) * p.PI;
+                        let dist = this.size * (1 - i / 40);
+                        let waveAmount = p.sin(angle * 3) * (this.size * 0.15);
+                        let vx = p.cos(angle) * dist + waveAmount;
+                        let vy = -p.sin(angle) * dist - this.size * 0.2;
+                        p.vertex(vx, vy);
+                    }
+                    p.endShape();
+
+                    // 下半部貝殼（更深的紫色）
+                    p.fill(160, 110, 170);
+                    p.stroke(100, 60, 130);
+                    p.strokeWeight(2);
+
+                    p.beginShape();
+                    for (let i = 0; i <= 20; i++) {
+                        let angle = (i / 20) * p.PI;
+                        let dist = this.size * (1 - i / 40);
+                        let waveAmount = p.sin(angle * 3) * (this.size * 0.15);
+                        let vx = p.cos(angle) * dist + waveAmount;
+                        let vy = p.sin(angle) * dist + this.size * 0.2;
+                        p.vertex(vx, vy);
+                    }
+                    p.endShape();
+                }
+
+                drawFanShell() {
+                    // 上半部
+                    p.fill(170, 120, 190);
+                    p.stroke(120, 70, 150);
+                    p.strokeWeight(2);
+
+                    p.beginShape();
+                    p.vertex(0, -this.size * 0.3);
+                    for (let i = 0; i <= 15; i++) {
+                        let angle = (i / 15) * p.PI - p.PI / 2;
+                        let dist = this.size;
+                        let waveAmount = p.sin(i * 0.4) * (this.size * 0.1);
+                        let vx = p.cos(angle) * (dist + waveAmount);
+                        let vy = p.sin(angle) * dist - this.size * 0.2;
+                        p.vertex(vx, vy);
+                    }
+                    p.endShape(p.CLOSE);
+
+                    // 下半部
+                    p.fill(150, 100, 170);
+                    p.stroke(100, 50, 140);
+                    p.strokeWeight(2);
+
+                    p.beginShape();
+                    p.vertex(0, this.size * 0.3);
+                    for (let i = 0; i <= 15; i++) {
+                        let angle = (i / 15) * p.PI - p.PI / 2;
+                        let dist = this.size;
+                        let waveAmount = p.sin(i * 0.4) * (this.size * 0.1);
+                        let vx = p.cos(angle) * (dist + waveAmount);
+                        let vy = p.sin(angle) * dist + this.size * 0.2;
+                        p.vertex(vx, vy);
+                    }
+                    p.endShape(p.CLOSE);
+                }
+
+                drawConchShell() {
+                    p.fill(210, 160, 110);
+                    p.stroke(110, 80, 50);
+                    p.strokeWeight(2);
+                    p.beginShape();
+                    for (let i = 0; i < 30; i++) {
+                        let angle = (i / 30) * p.TWO_PI * 2;
+                        let dist = (i / 30) * this.size * 0.9;
+                        let vx = p.cos(angle) * dist - this.size * 0.3;
+                        let vy = p.sin(angle) * dist;
+                        p.vertex(vx, vy);
+                    }
+                    p.endShape();
+                }
+            }
+
+            let shells = [];
+
+            p.setup = function() {
+                let container = document.getElementById('p5-container');
+                p.createCanvas(container.offsetWidth, container.offsetHeight);
+
+                // 創建多個殼類實例
+                for (let i = 0; i < 6; i++) {
+                    shells.push(new Shell(
+                        p.random(50, p.width - 50),
+                        p.random(50, p.height - 50),
+                        p.random(30, 60),
+                        i % 3
+                    ));
+                }
+            };
+
+            p.draw = function() {
+                p.background(100, 150, 200);
+
+                // 海洋漸層背景
+                for (let i = 0; i < p.height; i++) {
+                    let inter = p.map(i, 0, p.height, 0, 1);
+                    let c = p.lerpColor(p.color(100, 150, 200), p.color(20, 80, 150), inter);
+                    p.stroke(c);
+                    p.line(0, i, p.width, i);
+                }
+
+                // 更新和顯示所有殼
+                for (let shell of shells) {
+                    shell.update();
+                    shell.display();
+                }
+
+                // 顯示類別信息
+                p.fill(255);
+                p.textSize(12);
+                p.textAlign(p.LEFT);
+                p.text("Shell 類別實例數: " + shells.length, 10, p.height - 10);
+            };
+
+            p.windowResized = function() {
+                if (document.getElementById('p5-container')) {
+                    let container = document.getElementById('p5-container');
+                    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+                }
+            };
+        };
+
+        new p5(sketch);
+    </script>
+</body>
+</html>

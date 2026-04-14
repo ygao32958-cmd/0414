@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For 迴圈與陣列演示</title>
+    <script src="libraries/p5.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        #p5-container {
+            width: 100%;
+            height: 100%;
+        }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="p5-container"></div>
+    <div class="info">
+        <strong>For 迴圈與陣列演示</strong><br>
+        使用迴圈和陣列管理多個物件
+    </div>
+    <script>
+        let sketch = (p) => {
+            let particles = [];
+
+            p.setup = function() {
+                let container = document.getElementById('p5-container');
+                p.createCanvas(container.offsetWidth, container.offsetHeight);
+
+                // 使用 for 迴圈初始化陣列
+                for (let i = 0; i < 20; i++) {
+                    particles.push({
+                        x: p.random(p.width),
+                        y: p.random(p.height),
+                        vx: p.random(-2, 2),
+                        vy: p.random(-2, 2),
+                        size: p.random(10, 30),
+                        color: [p.random(150, 220), p.random(100, 180), p.random(80, 150)]
+                    });
+                }
+            };
+
+            p.draw = function() {
+                p.background(100, 150, 200);
+
+                // 海洋漸層背景
+                for (let i = 0; i < p.height; i++) {
+                    let inter = p.map(i, 0, p.height, 0, 1);
+                    let c = p.lerpColor(p.color(100, 150, 200), p.color(20, 80, 150), inter);
+                    p.stroke(c);
+                    p.line(0, i, p.width, i);
+                }
+
+                // 使用 for 迴圈更新和繪製所有粒子
+                for (let i = 0; i < particles.length; i++) {
+                    let p_obj = particles[i];
+                    
+                    // 更新位置
+                    p_obj.x += p_obj.vx;
+                    p_obj.y += p_obj.vy;
+
+                    // 邊界反彈
+                    if (p_obj.x < 0 || p_obj.x > p.width) p_obj.vx *= -1;
+                    if (p_obj.y < 0 || p_obj.y > p.height) p_obj.vy *= -1;
+
+                    p_obj.x = p.constrain(p_obj.x, 0, p.width);
+                    p_obj.y = p.constrain(p_obj.y, 0, p.height);
+
+                    // 繪製
+                    p.fill(p_obj.color[0], p_obj.color[1], p_obj.color[2]);
+                    p.noStroke();
+                    p.ellipse(p_obj.x, p_obj.y, p_obj.size);
+
+                    // 高光
+                    p.fill(255, 255, 200, 150);
+                    p.ellipse(p_obj.x - p_obj.size * 0.25, p_obj.y - p_obj.size * 0.25, p_obj.size * 0.4);
+                }
+
+                // 繪製陣列信息
+                p.fill(255);
+                p.textSize(14);
+                p.textAlign(p.LEFT);
+                p.text("陣列大小: " + particles.length + " 個粒子", 10, p.height - 10);
+            };
+
+            // 滑鼠點擊添加新粒子
+            p.mousePressed = function() {
+                if (p.mouseX > 0 && p.mouseX < p.width && p.mouseY > 0 && p.mouseY < p.height) {
+                    particles.push({
+                        x: p.mouseX,
+                        y: p.mouseY,
+                        vx: p.random(-2, 2),
+                        vy: p.random(-2, 2),
+                        size: p.random(10, 30),
+                        color: [p.random(150, 220), p.random(100, 180), p.random(80, 150)]
+                    });
+                    return false;
+                }
+            };
+
+            p.windowResized = function() {
+                if (document.getElementById('p5-container')) {
+                    let container = document.getElementById('p5-container');
+                    p.resizeCanvas(container.offsetWidth, container.offsetHeight);
+                }
+            };
+        };
+
+        new p5(sketch);
+    </script>
+</body>
+</html>
